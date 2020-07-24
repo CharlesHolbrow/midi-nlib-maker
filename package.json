@@ -1,0 +1,16 @@
+{
+  "name": "@fluid-music/midi-nlib-maker",
+  "version": "0.0.1",
+  "description": "experimental nLibrary maker using midi input",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Charles Holbrow",
+  "license": "ISC",
+  "dependencies": {
+    "jzz": "^1.0.9",
+    "midi-help": "^0.2.1",
+    "sharp11": "^2.0.2"
+  }
+}
