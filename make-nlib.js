@@ -23,7 +23,7 @@ console.log(
 // Setup the header and footer
 fileStream.write(`const nLibrary = {\n`)
 onDeath(() => {
-  fileStream.write(`};\n\n module.exports.nLibrary = nLibrary;\n`);
+  fileStream.write(`};\n\nmodule.exports.nLibrary = nLibrary;\n`);
   process.exit();
 });
 
