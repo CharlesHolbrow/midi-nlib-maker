@@ -1,9 +1,15 @@
-import help from 'midi-help';
-import s11 from 'sharp11';
+const help = require('midi-help');
+const s11 = require('sharp11');
+const util = require('util');
 
+function createLetterGetter() {
+  const s = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  let i = 0;
+  return () => s[i++ % s.length];
+}
 
-export class ChordAnalyzer {
-  constructor() {
+class ChordAnalyzer {
+  constructor(writableStream) {
 
     // s11 does not include a way to lookup notes by their midi note number.
     // I'll make that possible here via the midiNotes object, which indexes beginning at 24
@@ -19,6 +25,7 @@ export class ChordAnalyzer {
     this.parser = new help.MidiParser();
     this.midiNotesDown = {};
     this.lastChord = { s11Notes: [], name: '' };
+    this.letterGetter = createLetterGetter();
 
     this.parser.on('noteOn', (note, velocity, channel) =>{
       if (velocity === 0) {
@@ -40,21 +47,30 @@ export class ChordAnalyzer {
 
       this.lastChord.s11Notes = down;
       this.lastChord.name = chordName;
+      this.lastChord.noteNames = noteNames;
+      this.lastChord.midiNoteNums = Object.keys(this.midiNotesDown).map(Number);
 
       this.parser.emit('chord', this.lastChord);
     });
-    
+
     this.parser.on('noteOff', (note, velocity, channel) => {
       if (this.midiNotesDown[note]) delete this.midiNotesDown[note];
       if (Object.keys(this.midiNotesDown).length === 0) this.parser.emit('lastChord', this.lastChord);
     });
-    
-    this.parser.on('lastChord', (chord) => {
-      console.log('lastChord:', chord.name);
-    });
-    
+
     this.parser.on('chord', (chord) => {
-      console.log('Chord:', chord.name);
+      writableStream.write('\r' + chord.name + '             ');
+    });
+
+    this.parser.on('lastChord', (chord) => {
+      writableStream.write('\r                             \r');
+      writableStream.write(`  "${this.letterGetter()}": {
+    type: "midiChord",
+    name: "${chord.name}",
+    notes: ${util.inspect(chord.midiNoteNums)},
+  },\n`);
     });
   }
 }
+
+module.exports = ChordAnalyzer;
