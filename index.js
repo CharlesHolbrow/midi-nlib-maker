@@ -1,7 +1,23 @@
-const navigator = require('jzz');
+const fs          = require('fs');
+const PassThrough = require('stream').PassThrough;
+const navigator  = require('jzz');
+const onDeath    = require('death');
 const ChordAnalyzer = require('./Analyzer.js');
 
-const analyzer = new ChordAnalyzer(process.stdout);
+// This main output stream will be split, and sent to both stdout and a file
+const outputStream = new PassThrough();
+const fileStream   = fs.createWriteStream('nLibrary.js');
+outputStream.pipe(process.stdout);
+outputStream.pipe(fileStream);
+
+// Setup the header and footer
+outputStream.write(`const nLibrary = {\n`)
+onDeath(() => {
+  outputStream.write(`};\n`);
+  process.exit();
+});
+
+const analyzer = new ChordAnalyzer(outputStream);
 
 // Annoying Midi Boilerplate
 if (!navigator.requestMIDIAccess) {
@@ -23,7 +39,7 @@ if (!navigator.requestMIDIAccess) {
         }
       }
       input.value.onstatechange = function(event) {
-        console.log('// Midi state changed (ex. device (dis)connected)');
+        /* Fires when MIDI devices plugged and unplugged */
       }
     }
   }, function(reason){console.log('failed to get midi access:', reason)});
