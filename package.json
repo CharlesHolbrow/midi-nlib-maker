@@ -11,7 +11,7 @@
   "dependencies": {
     "death": "^1.1.0",
     "jzz": "^1.0.9",
-    "midi-help": "^0.2.1",
+    "midi-help": "^1.0.0",
     "sharp11": "^2.0.2"
   },
   "bin": {
