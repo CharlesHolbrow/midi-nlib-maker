@@ -1,14 +1,25 @@
-const fs          = require('fs');
-const PassThrough = require('stream').PassThrough;
-const navigator  = require('jzz');
-const onDeath    = require('death');
+#!/usr/bin/env node
+
+const fs            = require('fs');
+const PassThrough   = require('stream').PassThrough;
+const navigator     = require('jzz');
+const onDeath       = require('death');
 const ChordAnalyzer = require('./Analyzer.js');
+
+// write the output to this file
+const filename = process.argv[2] || 'nLibrary.js';
 
 // This main output stream will be split, and sent to both stdout and a file
 const outputStream = new PassThrough();
-const fileStream   = fs.createWriteStream('nLibrary.js');
+const fileStream   = fs.createWriteStream(filename);
 outputStream.pipe(process.stdout);
 outputStream.pipe(fileStream);
+
+console.error(
+`// Listening for MIDI chords on all MIDI interfaces
+// Default output file is "nLibrary.js". Pass in a filename to override:
+// $ make-nlib out.js
+`);
 
 // Setup the header and footer
 outputStream.write(`const nLibrary = {\n`)
@@ -40,6 +51,9 @@ if (!navigator.requestMIDIAccess) {
       }
       input.value.onstatechange = (event)=> {
         /* Fires when MIDI devices plugged and unplugged */
+        const name = event.port.name;
+        const man  = event.port.manufacturer;
+        const state = event.port.state;
       }
     }
   }, (reason)=> {

@@ -1,8 +1,8 @@
 {
-  "name": "@fluid-music/midi-nlib-maker",
+  "name": "@fluid-music/make-nlib",
   "version": "0.0.1",
   "description": "experimental nLibrary maker using midi input",
-  "main": "index.js",
+  "main": "Analyzer.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -13,5 +13,8 @@
     "jzz": "^1.0.9",
     "midi-help": "^0.2.1",
     "sharp11": "^2.0.2"
+  },
+  "bin": {
+    "make-nlib": "./make-nlib.js"
   }
 }
