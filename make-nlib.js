@@ -5,9 +5,11 @@ const PassThrough   = require('stream').PassThrough;
 const navigator     = require('jzz');
 const onDeath       = require('death');
 const ChordAnalyzer = require('./Analyzer.js');
+const { stderr } = require('process');
 
 // write the output to this file
-const filename = process.argv[2] || 'nLibrary.js';
+const defaultFilename = 'nLibrary.js';
+const filename = process.argv[2] || defaultFilename;
 
 // This main output stream will be split, and sent to both stdout and a file
 const outputStream = new PassThrough();
@@ -15,18 +17,12 @@ const fileStream   = fs.createWriteStream(filename);
 outputStream.pipe(process.stdout);
 outputStream.pipe(fileStream);
 
-console.error(
-`// Listening for MIDI chords on all MIDI interfaces
-// Default output file is "nLibrary.js". Pass in a filename to override:
-// $ make-nlib out.js
-`);
+console.log(
+`Usage: $ make-nlib out.js # (Currently writing to "${filename}")`);
 
 // Setup the header and footer
-outputStream.write(`const nLibrary = {\n`)
-onDeath(() => {
-  outputStream.write(`};\n`);
-  process.exit();
-});
+fileStream.write(`const nLibrary = {\n`)
+onDeath(() => { fileStream.write(`};\n`); process.exit(); });
 
 const analyzer = new ChordAnalyzer(outputStream);
 
@@ -38,9 +34,10 @@ if (!navigator.requestMIDIAccess) {
   }).then(midiAccess => {
     const inputs = midiAccess.inputs.values();
     // loop over all available inputs and listen for any MIDI input
-    for (let input = inputs.next(); input && !input.done; input = inputs.next()) {
+    for (let input of inputs) {
       // each time there is a midi message call the onMIDIMessage function
-      input.value.onmidimessage = (event)=> {
+      console.log(`${input.state}: "${input.name}"`);
+      input.onmidimessage = (event)=> {
         // jzz silently ignores errors in callbacks, so we log them explicitly.
         try {
           if (event.data) analyzer.parser.parseArray(event.data);
@@ -49,13 +46,11 @@ if (!navigator.requestMIDIAccess) {
           throw error;
         }
       }
-      input.value.onstatechange = (event)=> {
+      input.onstatechange = (event)=> {
         /* Fires when MIDI devices plugged and unplugged */
-        const name = event.port.name;
-        const man  = event.port.manufacturer;
-        const state = event.port.state;
       }
     }
+    console.log(''); // newline
   }, (reason)=> {
     console.log('failed to get midi access:', reason);
   });
