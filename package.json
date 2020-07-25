@@ -1,6 +1,6 @@
 {
   "name": "@fluid-music/make-nlib",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "experimental nLibrary maker using midi input",
   "main": "Analyzer.js",
   "scripts": {
