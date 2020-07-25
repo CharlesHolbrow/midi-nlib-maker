@@ -5,7 +5,6 @@ const PassThrough   = require('stream').PassThrough;
 const navigator     = require('jzz');
 const onDeath       = require('death');
 const ChordAnalyzer = require('./Analyzer.js');
-const { stderr } = require('process');
 
 // write the output to this file
 const defaultFilename = 'nLibrary.js';
