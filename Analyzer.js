@@ -42,8 +42,6 @@ class ChordAnalyzer {
       const noteNames = Object.entries(this.midiNotesDown).map(v => v[1].s11.fullName);
       const down      = Object.entries(this.midiNotesDown).map(v => v[1].s11);
       const chordName = s11.chord.identifyArray(down);
-      // Object.entries(undefined); console.log('after hi');
-      //midiNotesDosdfs[note] = {a: 'hi'}; console.log('after');
 
       this.lastChord.s11Notes = down;
       this.lastChord.name = chordName;
