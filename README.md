@@ -3,7 +3,7 @@
 A super simple way to create nLibraries containing chords with a MIDI keyboard.
 
 ```
-$ npm install @fluid-music/make-nlib
+$ npm install -g @fluid-music/make-nlib
 $ make-nlib output.js
 Usage: $ make-nlib out.js # (Currently writing to "output.js")
 connected: "Midi Through Port-0"
