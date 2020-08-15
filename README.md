@@ -1,3 +1,7 @@
+# Deprecated
+
+This behavior has been moved to the [@fluid-music/utils](https://www.npmjs.com/package/@fluid-music/utils) package.
+
 # make-nlib
 
 A super simple way to create nLibraries containing chords with a MIDI keyboard.
